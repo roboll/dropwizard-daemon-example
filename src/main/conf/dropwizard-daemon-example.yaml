@@ -1,0 +1,9 @@
+logging:
+  appenders:
+    - type: file
+      threshold: ALL
+      currentLogFilename: ${logdir}/dropwizard-daemon-example.log
+      archivedLogFilenamePattern: ${logdir}/dropwizard-daemon-example-%d.log.gz
+      archivedFileCount: 5
+
+  level: INFO

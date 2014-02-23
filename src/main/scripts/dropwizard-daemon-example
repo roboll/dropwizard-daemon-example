@@ -1,0 +1,97 @@
+#!/bin/sh
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+NAME="${artifactId}"
+
+PIDFILE="$SCRIPT_DIR/../$NAME.pid"
+# or
+#PIDFILE=/var/run/$NAME.pid
+JARFILE="$SCRIPT_DIR/../${project.build.finalName}.jar"
+CONFIG="$SCRIPT_DIR/../conf/$NAME.yaml"
+
+COMMAND="server"
+JAVA_OPTS="-Ddaemon=true"
+
+PID=""
+
+function abs() {
+    echo $(cd $(dirname $1); pwd)/$(basename $1)
+}
+
+function _get_pid() {
+    if [ -f $PIDFILE ]; then
+        PID=`cat $PIDFILE`
+        return
+    else
+        echo "Unable to locate pidfile."
+        exit 1
+    fi
+}
+
+function _abs_paths() {
+    PIDFILE=`abs $PIDFILE`
+    JARFILE=`abs $JARFILE`
+    CONFIG=`abs $CONFIG`
+}
+
+function _dw_start() {
+    echo "Starting service..."
+    _abs_paths
+    java $JAVA_OPTS -Dpidfile=$PIDFILE -jar $JARFILE $COMMAND $CONFIG
+    if [ $? != 0 ]; then
+        echo "Failed to start service, check logs."
+    else
+        echo "Service started."
+    fi
+    exit $?
+}
+
+function _dw_status() {
+    _abs_paths
+    _get_pid
+    if [ ! -z $PID ]; then
+        if [ ! -z "ps -p $PID" ]; then
+            echo "Service is running with PID $PID..."
+            exit 0
+        else
+            echo "Service is not running..."
+            exit 1
+        fi
+    else
+        echo "No PID found in $PIDFILE..."
+    fi
+}
+
+function _dw_stop() {
+    _abs_paths
+    _get_pid
+
+    echo "Stopping process with PID $PID..."
+    kill -2 $PID
+    if [ $? != 0 ]; then
+        echo "Error stopping service! Exit code $?."
+        exit $?
+    fi
+}
+
+function _show_usage() {
+    echo "dw-service {start|status|stop|usage}"
+}
+
+case $1 in
+    start)
+        _dw_start
+    ;;
+
+    status)
+        _dw_status
+    ;;
+
+    stop)
+        _dw_stop
+    ;;
+
+    *)
+        _show_usage
+    ;;
+esac

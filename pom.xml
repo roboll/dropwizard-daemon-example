@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.robertcboll.dropwizard</groupId>
+        <artifactId>dropwizard-service-parent</artifactId>
+        <version>0.1</version>
+    </parent>
+
+    <artifactId>dropwizard-daemon-example</artifactId>
+    <version>0.1</version>
+
+    <name>[Dropwizard Daemon] Akuma Integration Example</name>
+    <description/>
+
+    <properties>
+        <service.mainclass>com.robertcboll.dropwizard.daemon.example.DaemonizedApplication</service.mainclass>
+    </properties>
+
+    <dependencies>
+        <!-- akuma -->
+        <dependency>
+            <groupId>com.robertcboll.dropwizard</groupId>
+            <artifactId>dropwizard-daemon</artifactId>
+            <version>0.1</version>
+        </dependency>
+    </dependencies>
+
+</project>
